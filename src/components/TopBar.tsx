@@ -9,6 +9,7 @@ interface TopBarProps {
   isLoading: boolean;
   onRefresh: () => void;
   source: 'live' | 'cache' | 'offline';
+  onOpenHealth: () => void;
 }
 
 export const TopBar: React.FC<TopBarProps> = ({
@@ -18,6 +19,7 @@ export const TopBar: React.FC<TopBarProps> = ({
   isLoading,
   onRefresh,
   source,
+  onOpenHealth,
 }) => {
   const formatTime = (ts: number) => {
     if (!ts) return 'Just now';
@@ -78,8 +80,12 @@ export const TopBar: React.FC<TopBarProps> = ({
         </nav>
 
         {/* Zone 3: Live Rate Status & Refresh */}
-        <div className="flex items-center gap-2.5">
-          <div className="flex items-center gap-1.5 text-[11px] text-slate-400">
+        <div className="flex items-center gap-2">
+          <button
+            onClick={onOpenHealth}
+            className="flex items-center gap-1.5 px-2 py-1 rounded-lg bg-slate-800 hover:bg-slate-700 text-[11px] text-slate-300 transition-colors"
+            title="Inspect API Health & MAS status"
+          >
             <span
               className={`w-2 h-2 rounded-full ${
                 source === 'live'
@@ -88,12 +94,9 @@ export const TopBar: React.FC<TopBarProps> = ({
                   ? 'bg-amber-400'
                   : 'bg-slate-500'
               }`}
-              title={source === 'live' ? 'Live mid-market rates' : 'Cached rates'}
             />
-            <span className="hidden xs:inline">
-              {source === 'live' ? 'Live' : 'Cached'} {formatTime(lastUpdated)}
-            </span>
-          </div>
+            <span className="hidden sm:inline font-mono">API Health</span>
+          </button>
 
           <button
             onClick={onRefresh}

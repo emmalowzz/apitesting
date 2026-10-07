@@ -15,10 +15,12 @@ import { ConverterTab } from './components/ConverterTab';
 import { ChangerCheckerTab } from './components/ChangerCheckerTab';
 import { ChartsTab } from './components/ChartsTab';
 import { WatchlistTab } from './components/WatchlistTab';
+import { ApiHealthModal } from './components/ApiHealthModal';
 import { Info, HelpCircle } from 'lucide-react';
 
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('converter');
+  const [isHealthModalOpen, setIsHealthModalOpen] = useState<boolean>(false);
 
   // Currencies state
   const [fromCurrency, setFromCurrency] = useState<Currency>(() => getCurrency('USD'));
@@ -164,6 +166,7 @@ export default function App() {
         isLoading={isLoadingRates}
         onRefresh={loadRates}
         source={ratesData.source}
+        onOpenHealth={() => setIsHealthModalOpen(true)}
       />
 
       {/* Main Content Area */}
@@ -292,6 +295,12 @@ export default function App() {
         title={getPickerTitle()}
         selectedCode={getCurrentlySelectedCode()}
         onSelect={handleSelectCurrency}
+      />
+
+      {/* API Health & MAS Diagnostics Modal */}
+      <ApiHealthModal
+        isOpen={isHealthModalOpen}
+        onClose={() => setIsHealthModalOpen(false)}
       />
     </div>
   );

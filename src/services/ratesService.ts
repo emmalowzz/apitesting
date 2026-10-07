@@ -5,6 +5,44 @@ import { getCurrency } from '../data/currencies';
 const CACHE_KEY = 'xe_exchange_rates_v1';
 const CACHE_TTL_MS = 10 * 60 * 1000; // 10 minutes cache
 
+export async function checkApiHealth(): Promise<any> {
+  try {
+    const res = await fetch('/api/health');
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}`);
+    }
+    return await res.json();
+  } catch (err: any) {
+    return {
+      status: 'offline_or_direct',
+      error: err.message,
+      timestamp: new Date().toISOString(),
+      apis: {
+        masDailyRates: {
+          configured: false,
+          status: 'awaiting_deployment_or_env_key',
+        },
+      },
+    };
+  }
+}
+
+export async function fetchMasRates(): Promise<any> {
+  try {
+    const res = await fetch('/api/mas-rates');
+    if (!res.ok) {
+      throw new Error(`MAS API error ${res.status}`);
+    }
+    return await res.json();
+  } catch (err: any) {
+    return {
+      status: 'error',
+      configured: false,
+      error: err.message,
+    };
+  }
+}
+
 export async function fetchLiveRates(): Promise<RatesData> {
   // Check cached data first
   try {
@@ -17,6 +55,34 @@ export async function fetchLiveRates(): Promise<RatesData> {
     }
   } catch (e) {
     console.warn('Failed to read rates cache', e);
+  }
+
+  // Try fetching through MAS backend API if configured
+  try {
+    const masData = await fetchMasRates();
+    if (masData && masData.status === 'success' && masData.data?.result?.records) {
+      const records = masData.data.result.records;
+      const latestRecord = records[records.length - 1] || records[0];
+      if (latestRecord && latestRecord.usd_sgd) {
+        const usdSgd = parseFloat(latestRecord.usd_sgd);
+        if (!isNaN(usdSgd) && usdSgd > 0) {
+          // Construct updated rates
+          const updatedRates: Record<string, number> = { ...FALLBACK_USD_RATES, SGD: usdSgd };
+          const ratesData: RatesData = {
+            base: 'USD',
+            rates: updatedRates,
+            lastUpdated: Date.now(),
+            source: 'live',
+          };
+          try {
+            localStorage.setItem(CACHE_KEY, JSON.stringify(ratesData));
+          } catch {}
+          return ratesData;
+        }
+      }
+    }
+  } catch (masErr) {
+    // continue to primary interbank feed
   }
 
   try {
