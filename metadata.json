@@ -1,0 +1,8 @@
+{
+  "name": "Currency & Money Changer Checker",
+  "description": "Mobile exchange rate converter with real mid-market rates and physical money changer competitiveness analyzer.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
