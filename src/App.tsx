@@ -13,6 +13,7 @@ import { BottomNav } from './components/BottomNav';
 import { CurrencyPickerModal } from './components/CurrencyPickerModal';
 import { ConverterTab } from './components/ConverterTab';
 import { ChangerCheckerTab } from './components/ChangerCheckerTab';
+import { NearbyChangersTab } from './components/NearbyChangersTab';
 import { ChartsTab } from './components/ChartsTab';
 import { WatchlistTab } from './components/WatchlistTab';
 import { ApiHealthModal } from './components/ApiHealthModal';
@@ -21,6 +22,7 @@ import { Info, HelpCircle } from 'lucide-react';
 export default function App() {
   const [activeTab, setActiveTab] = useState<ActiveTab>('converter');
   const [isHealthModalOpen, setIsHealthModalOpen] = useState<boolean>(false);
+  const [selectedBoothForCheck, setSelectedBoothForCheck] = useState<string>('');
 
   // Currencies state
   const [fromCurrency, setFromCurrency] = useState<Currency>(() => getCurrency('USD'));
@@ -175,7 +177,7 @@ export default function App() {
         <div className="flex md:hidden items-center gap-1 p-1 bg-white rounded-xl border border-slate-200/80 mb-4 shadow-2xs overflow-x-auto scrollbar-none">
           <button
             onClick={() => setActiveTab('converter')}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+            className={`flex-1 py-2 px-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               activeTab === 'converter'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -185,17 +187,27 @@ export default function App() {
           </button>
           <button
             onClick={() => setActiveTab('changer')}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+            className={`flex-1 py-2 px-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               activeTab === 'changer'
                 ? 'bg-emerald-600 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
             }`}
           >
-            Changer Check
+            Rate Check
+          </button>
+          <button
+            onClick={() => setActiveTab('nearby')}
+            className={`flex-1 py-2 px-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+              activeTab === 'nearby'
+                ? 'bg-emerald-600 text-white shadow-xs'
+                : 'text-slate-600 hover:text-slate-900'
+            }`}
+          >
+            Nearby
           </button>
           <button
             onClick={() => setActiveTab('charts')}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+            className={`flex-1 py-2 px-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               activeTab === 'charts'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -205,7 +217,7 @@ export default function App() {
           </button>
           <button
             onClick={() => setActiveTab('watchlist')}
-            className={`flex-1 py-2 px-3 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
+            className={`flex-1 py-2 px-2.5 rounded-lg text-xs font-bold whitespace-nowrap transition-colors ${
               activeTab === 'watchlist'
                 ? 'bg-slate-900 text-white shadow-xs'
                 : 'text-slate-600 hover:text-slate-900'
@@ -238,10 +250,26 @@ export default function App() {
             onSelectHome={() => setPickerTarget('home')}
             onSelectForeign={() => setPickerTarget('foreign')}
             onSwapCurrencies={handleSwapChanger}
+            selectedBoothName={selectedBoothForCheck}
+            onNavigateToNearby={() => {
+              setActiveTab('nearby');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
           />
         )}
 
-        {/* Tab 3: Historical Mid-Market Rate Charts */}
+        {/* Tab 3: Find Closest Money Changers (MAS Licensed Geodata) */}
+        {activeTab === 'nearby' && (
+          <NearbyChangersTab
+            onSelectChangerForCheck={(boothName) => {
+              setSelectedBoothForCheck(boothName);
+              setActiveTab('changer');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
+          />
+        )}
+
+        {/* Tab 4: Historical Mid-Market Rate Charts */}
         {activeTab === 'charts' && (
           <ChartsTab
             fromCurrency={fromCurrency}

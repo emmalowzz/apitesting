@@ -1,5 +1,5 @@
 import React from 'react';
-import { ArrowLeftRight, Store, LineChart, Star } from 'lucide-react';
+import { ArrowLeftRight, Store, Compass, LineChart, Star } from 'lucide-react';
 import { ActiveTab } from '../types/currency';
 
 interface BottomNavProps {
@@ -16,8 +16,13 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onChangeTab }) 
     },
     {
       id: 'changer' as ActiveTab,
-      label: 'Changer Check',
+      label: 'Rate Check',
       icon: Store,
+    },
+    {
+      id: 'nearby' as ActiveTab,
+      label: 'Nearby',
+      icon: Compass,
     },
     {
       id: 'charts' as ActiveTab,
@@ -33,7 +38,7 @@ export const BottomNav: React.FC<BottomNavProps> = ({ activeTab, onChangeTab }) 
 
   return (
     <nav className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900/95 backdrop-blur-md border-t border-slate-800 pb-safe md:hidden shadow-lg">
-      <div className="grid grid-cols-4 items-center h-15 max-w-md mx-auto">
+      <div className="grid grid-cols-5 items-center h-15 max-w-md mx-auto">
         {tabs.map((tab) => {
           const isActive = activeTab === tab.id;
           const Icon = tab.icon;

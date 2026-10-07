@@ -26,6 +26,8 @@ interface ChangerCheckerTabProps {
   onSelectHome: () => void;
   onSelectForeign: () => void;
   onSwapCurrencies: () => void;
+  selectedBoothName?: string;
+  onNavigateToNearby?: () => void;
 }
 
 export const ChangerCheckerTab: React.FC<ChangerCheckerTabProps> = ({
@@ -35,6 +37,8 @@ export const ChangerCheckerTab: React.FC<ChangerCheckerTabProps> = ({
   onSelectHome,
   onSelectForeign,
   onSwapCurrencies,
+  selectedBoothName,
+  onNavigateToNearby,
 }) => {
   // Mode: 'buy' = Traveler buying foreign cash with home currency
   // 'sell' = Traveler selling foreign cash to get home currency
@@ -72,7 +76,13 @@ export const ChangerCheckerTab: React.FC<ChangerCheckerTabProps> = ({
     }
   });
 
-  const [boothNameInput, setBoothNameInput] = useState<string>('');
+  const [boothNameInput, setBoothNameInput] = useState<string>(selectedBoothName || '');
+
+  React.useEffect(() => {
+    if (selectedBoothName) {
+      setBoothNameInput(selectedBoothName);
+    }
+  }, [selectedBoothName]);
 
   // 1 Home Currency = midMarketDirect Foreign Currency
   const midMarketDirect = getExchangeRate(rates, homeCurrency.code, foreignCurrency.code);
@@ -295,7 +305,7 @@ export const ChangerCheckerTab: React.FC<ChangerCheckerTabProps> = ({
     <div className="space-y-4 pb-8">
       {/* Top Explainer Header */}
       <div className="bg-white rounded-2xl border border-slate-200/80 shadow-sm p-4 sm:p-5">
-        <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div>
             <h1 className="text-base sm:text-lg font-bold text-slate-900 tracking-tight flex items-center gap-2">
               <Store className="w-5 h-5 text-emerald-600" />
@@ -305,6 +315,16 @@ export const ChangerCheckerTab: React.FC<ChangerCheckerTabProps> = ({
               Stand in front of the kiosk board, enter their rate, and immediately uncover the hidden spread markup.
             </p>
           </div>
+
+          {onNavigateToNearby && (
+            <button
+              onClick={onNavigateToNearby}
+              className="flex items-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-900 border border-emerald-200 rounded-xl text-xs font-bold transition-colors shrink-0 self-start sm:self-auto"
+            >
+              <Building className="w-3.5 h-3.5 text-emerald-700" />
+              <span>Find Nearby Counters</span>
+            </button>
+          )}
         </div>
 
         {/* Currency Pair Selector Bar */}

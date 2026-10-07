@@ -59,7 +59,15 @@ export const TopBar: React.FC<TopBarProps> = ({
               activeTab === 'changer' ? 'text-emerald-400 font-semibold' : ''
             }`}
           >
-            Money Changer Checker
+            Rate Checker
+          </button>
+          <button
+            onClick={() => onTabChange('nearby')}
+            className={`transition-colors hover:text-white ${
+              activeTab === 'nearby' ? 'text-emerald-400 font-semibold' : ''
+            }`}
+          >
+            Nearby Changers
           </button>
           <button
             onClick={() => onTabChange('charts')}

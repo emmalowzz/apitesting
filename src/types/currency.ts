@@ -43,4 +43,4 @@ export interface MoneyChangerQuote {
   createdAt: number;
 }
 
-export type ActiveTab = 'converter' | 'changer' | 'charts' | 'watchlist';
+export type ActiveTab = 'converter' | 'changer' | 'nearby' | 'charts' | 'watchlist';
